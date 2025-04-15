@@ -9,6 +9,7 @@
 #include <iomanip>
 using namespace std;
 
+//this is a structure that we will use to make the points that we will graph
 struct Point {
     double studyTime;
     double grade;
@@ -24,9 +25,10 @@ struct Point {
     }
 };
 
+//this code grabs the information from the data set that we will be using and puts it into a vector
 vector<Point> readcsv(const string& filename) {
     vector<Point> points;
-    ifstream file(filename);
+    ifstream file(filename); //open the dataset fil 
     string line;
 
     // Skip header
@@ -42,28 +44,31 @@ vector<Point> readcsv(const string& filename) {
             row.push_back(cell);
         }
 
-        if (row.size() < 14) continue; // Ensure both columns exist
+        if (row.size() < 14) continue; 
 
         try {
-            double studyTime = stod(row[5]);  // StudyTimeWeekly
-            double grade = stod(row[13]);     // GPA
+            double studyTime = stod(row[5]);  //study time
+            double grade = stod(row[13]);     //gpa
             points.push_back(Point(studyTime, grade));
         } catch (...) {
             continue;
         }
     }
 
-    file.close();
+    file.close(); //close the file
     return points;
 }
 
+
+//this is the function where we will calculate centroids with the information given to us from the dataset
 void kMeansClustering(vector<Point>* points, int epochs, int k) {
-    int n = points->size();
+    int n = (*points).size();
     vector<Point> centroids;
 
-    srand(time(0));
+    srand(time(NULL));
     for (int i = 0; i < k; ++i) {
-        centroids.push_back(points->at(rand() % n));
+        centroids.push_back((*points)[rand() % n]
+    );
     }
 
     for (int e = 0; e < epochs; ++e) {
@@ -104,7 +109,7 @@ void kMeansClustering(vector<Point>* points, int epochs, int k) {
         }
     }
 
-    // Output results
+    // Output results to output.txt
     ofstream myfile("output.txt");
     myfile << fixed << setprecision(4);
     myfile << "studyTime,grade,cluster" << endl;
@@ -115,8 +120,9 @@ void kMeansClustering(vector<Point>* points, int epochs, int k) {
 }
 
 int main() {
-    vector<Point> points = readcsv("Student_performance_data");  // <- Use your actual filename here
+    vector<Point> points = readcsv("Student_performance_data");  
     kMeansClustering(&points, 100, 5);
     cout << "✅ Clustering complete. Results saved to output.txt." << endl;
     return 0;
 }
+
